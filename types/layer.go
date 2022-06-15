@@ -83,6 +83,37 @@ func validateDataAsBind(i interface{}) (map[interface{}]interface{}, error) {
 		return nil, errors.Errorf("empty source or dest: %v", i)
 	}
 
+func validateDataAsBind(i interface{}) (map[interface{}]interface{}, error) {
+	bindMap, ok := i.(map[interface{}]interface{})
+	if !ok {
+		return nil, errors.Errorf("unable to cast into map[interface{}]interface{}: %T", i)
+	}
+
+	// validations
+	bindSource, ok := bindMap["Source"]
+	if !ok {
+		return nil, errors.Errorf("bind source missing: %v", i)
+	}
+
+	_, ok = bindSource.(string)
+	if !ok {
+		return nil, errors.Errorf("unknown bind source type, expected string: %T", i)
+	}
+
+	bindDest, ok := bindMap["Dest"]
+	if !ok {
+		return nil, errors.Errorf("bind dest missing: %v", i)
+	}
+
+	_, ok = bindDest.(string)
+	if !ok {
+		return nil, errors.Errorf("unknown bind dest type, expected string: %T", i)
+	}
+
+	if bindSource == "" || bindDest == "" {
+		return nil, errors.Errorf("empty source or dest: %v", i)
+	}
+
 	return bindMap, nil
 }
 
